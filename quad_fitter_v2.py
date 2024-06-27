@@ -1,4 +1,4 @@
-"""This quad fitter takes a collection of PMT hits from an event and attempts to 
+"""This quadfitter takes a collection of PMT hits from an event and attempts to 
 reconstruct the event vertex by calculating the predicted location of the event for
 sets of 4 PMTs. See Report on the Quadfitter by Ian Coulter for a theoretical
 overview."""
