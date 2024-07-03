@@ -46,7 +46,7 @@ def quadrangulate(hpmts):
     
     # calculate roots of quadratic and discard the non-real / unphysical root
     times = np.roots([c2,c1,c0])
-    time = times[1] if times[0] < -7 or times[0] > 7 else times[0]
+    time = times[1] if abs(times[0]) > 7.0 else times[0]
 
     if abs(time) > 7.0: return [10000,0,0,0]
 	
@@ -121,11 +121,11 @@ def get_best_fit():
 		
         plt.scatter(x_positions, y_positions, c="blue", label="Predicted Position Cloud", s=1)
         plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
-        plt.scatter(300,0,c="orange", label="Simulated Position", s=5)
+        plt.scatter(0,0,c="orange", label="Simulated Position", s=5)
         plt.legend()
-        plt.title("Position in XY-Plane for Event Located at (300,0,0)")
+        plt.title("Position in XY-Plane for Event Located at (0,0,0)")
         plt.xlim(-1000,1000)
         plt.ylim(-1000,1000)
-        plt.savefig("graph_300_0_0.pdf")
+        plt.savefig("graph_0_0_0.pdf")
 
 get_best_fit()
