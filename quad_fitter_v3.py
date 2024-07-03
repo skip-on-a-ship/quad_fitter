@@ -23,7 +23,7 @@ n = 6000
 # takes set of 4 hit PMTs and reconstructs the position based on the hit times and locations of the PMTs
 # follows math and variable naming scheme of Ian Coulter's quadfitter report
 # hpmts in numpy array of form [[x1,y1,z1,t1], [x2,y2,z2,t2], [x3,y3,z3,t3], [x4,y4,z4,t4]] 
-def quadrangulate(hpmts):
+def quadrangulate(hpmts, check):
 	
     # compute matricies M, N, K, G as defined in quadfitter report
     dif = np.array([hpmts[1] - hpmts[0], hpmts[2] - hpmts[0], hpmts[3] - hpmts[0]])
@@ -95,8 +95,8 @@ def get_best_fit():
                 for hit in pmt_hits[:4]:
                     pmt_positions.append([list(m.pmtX)[ids[hit]], list(m.pmtY)[ids[hit]], list(m.pmtZ)[ids[hit]], times[hit]])
 
-		hpmts = np.array(pmt_positions)
-		check = np.array([list(m.pmtX)[ids[3]], list(m.pmtY)[ids[3]], list(m.pmtZ)[ids[3]], times[3]]
+                hpmts = np.array(pmt_positions)
+                check = np.array([list(m.pmtX)[ids[3]], list(m.pmtY)[ids[3]], list(m.pmtZ)[ids[3]], times[3]])
                     
                 event_position = quadrangulate(hpmts, check)	
                         
