@@ -45,27 +45,23 @@ def quadrangulate(hpmts):
     c0 = np.dot(hpmts[0, :3]-G,hpmts[0, :3]-G) - np.dot(c*hpmts[0, -1], c*hpmts[0, -1])
     c1 = -2*c**2*(np.dot(hpmts[0, :3]-G,H)-hpmts[0, -1])
     c2 = c**2*(np.dot(H,H)-1)
-
+	
     # calculate roots of quadratic and discard the non-real / unphysical root
     times = np.roots([c2,c1,c0])
-    time = max(times)
+    positions = [G+c*c*time*H for time in times]
 
-    if abs(time) > 7.0: return [10000,0,0,0]
-	
-    # from the event time, calculate the event position
-    
-    position = G+c*c*time*H
+    if abs((np.sqrt((check[0]-positions[0][0])**2 + (check[1]-positions[0][1])**2 + (check[2]-positions[0][2])**2))/c - check[3] + times[0]) < abs((np.sqrt((check[0]-positions[1][0])**2 + (check[1]-positions[1][1])**2 + (check[2]-positions[1][2])**2))/c - check[3] + times[1]):
+        position = np.append(positions[0], times[0])
+    else: position = np.append(positions[1], times[1])
 
     # discard sets of 4 hits that yeild wildly off positions
     if np.any(abs(position) > 900.0): return [10000,0,0,0]
 	
-    position = np.append(position, time)
-	
     return position
 
-# takes in array of hit pmts and selects a set of four indicies in range
+# takes in array of hit pmts and selects a set of five indicies in range
 def get_hpmt_indicies(nhits):
-    return random.sample(range(nhits), 4)
+    return random.sample(range(nhits), 5)
 
 def get_best_fit():
     x_positions = []
@@ -96,10 +92,13 @@ def get_best_fit():
                 pmt_positions = []
                     
                 # get the data for each hit pmt
-                for hit in pmt_hits:
+                for hit in pmt_hits[:4]:
                     pmt_positions.append([list(m.pmtX)[ids[hit]], list(m.pmtY)[ids[hit]], list(m.pmtZ)[ids[hit]], times[hit]])
+
+		hpmts = np.array(pmt_positions)
+		check = np.array([list(m.pmtX)[ids[3]], list(m.pmtY)[ids[3]], list(m.pmtZ)[ids[3]], times[3]]
                     
-                event_position = quadrangulate(np.array(pmt_positions))	
+                event_position = quadrangulate(hpmts, check)	
                         
                 # add the reconstructed positions to the event cloud
                 if event_position[0] != 10000 and all(np.isreal(k) for k in event_position):
