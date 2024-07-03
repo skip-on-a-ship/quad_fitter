@@ -22,7 +22,7 @@ n = 6000
 
 # takes set of 4 hit PMTs and reconstructs the position based on the hit times and locations of the PMTs
 # follows math and variable naming scheme of Ian Coulter's quadfitter report
-# hpmts in numpy array of form [[x1,y1,z1,t1],[x2,y2,z2,t2], [x3,y3,z3,t3], [x4,y4,z4,t4]] 
+# hpmts in numpy array of form [[x1,y1,z1,t1], [x2,y2,z2,t2], [x3,y3,z3,t3], [x4,y4,z4,t4]] 
 def quadrangulate(hpmts):
 	
     # compute matricies M, N, K, G as defined in quadfitter report
