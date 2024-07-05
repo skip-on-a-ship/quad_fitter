@@ -16,7 +16,7 @@ f = ROOT.TFile.Open(filename)
 t = f.Get("output")
 m = f.Get("meta")
 # speed of light in water in mm/ns
-c = 225.0
+c = 300.0
 # number of sets of 4 PMTs to iterate over per event
 n = 6000
 
@@ -70,7 +70,7 @@ def get_best_fit():
     times = []
 	    
     # loop through all simulated events
-    for ev in range(1):#t.GetEntries()):
+    for ev in range(t.GetEntries()): #range(1):
         t.GetEntry(ev)
         m.GetEntry(ev)
             
@@ -108,25 +108,25 @@ def get_best_fit():
                     times.append(event_position[3])
                     i+=1
         
-        # average the reconstructed positions across events and pmt choices
-        median_x = np.median(x_positions)
-        median_y = np.median(y_positions)
-        median_z = np.median(z_positions)
-        average_x = np.mean(x_positions)
-        average_y = np.mean(y_positions)
-        average_z = np.mean(z_positions)
+    # average the reconstructed positions across events and pmt choices
+    median_x = np.median(x_positions)
+    median_y = np.median(y_positions)
+    median_z = np.median(z_positions)
+    average_x = np.mean(x_positions)
+    average_y = np.mean(y_positions)
+    average_z = np.mean(z_positions)
         
-        print("")
-        print("MEDIAN LOCATION: (" + str(median_x) + ", " + str(median_y) + ", " + str(median_z) +")")
-        print("AVERAGE LOCATION: (" + str(average_x) + ", " + str(average_y) + ", " + str(average_z) +")")
+    print("")
+    print("MEDIAN LOCATION: (" + str(median_x) + ", " + str(median_y) + ", " + str(median_z) +")")
+    print("AVERAGE LOCATION: (" + str(average_x) + ", " + str(average_y) + ", " + str(average_z) +")")
 		
-        plt.scatter(x_positions, y_positions, c="blue", label="Predicted Position Cloud", s=1)
-        plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
-        plt.scatter(0,0,c="orange", label="Simulated Position", s=5)
-        plt.legend()
-        plt.title("Position in XY-Plane for Event Located at (0,0,0)")
-        plt.xlim(-1000,1000)
-        plt.ylim(-1000,1000)
-        plt.savefig("graph_0_0_0.pdf")
+    plt.scatter(x_positions, y_positions, c="blue", label="Predicted Position Cloud", s=1)
+    plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
+    plt.scatter(0,350,c="orange", label="Simulated Position", s=5)
+    plt.legend()
+    plt.title("Position in XY-Plane for Event Located at (0,350,0)")
+    plt.xlim(-1000,1000)
+    plt.ylim(-1000,1000)
+    plt.savefig("graph_0_350_0.pdf")
 
 get_best_fit()
