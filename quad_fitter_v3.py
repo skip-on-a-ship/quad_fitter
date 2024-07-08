@@ -127,6 +127,6 @@ def get_best_fit():
     plt.title("Position in XY-Plane for Event Located at (0,350,0)")
     plt.xlim(-1000,1000)
     plt.ylim(-1000,1000)
-    plt.savefig("graph_0_350_0.pdf")
+    plt.savefig("graphs/graph_0_350_0.pdf")
 
 get_best_fit()
