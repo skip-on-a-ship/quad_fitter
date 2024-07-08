@@ -40,19 +40,21 @@ def quadrangulate(hpmts, check):
     M_inv = np.linalg.inv(M)
     G = np.dot(M_inv,K)
     H = np.dot(M_inv,N)
-	
+
   	# compute coefficients of quadratic as defined in quadfitter report
     c0 = np.dot(hpmts[0, :3]-G,hpmts[0, :3]-G) - np.dot(c*hpmts[0, -1], c*hpmts[0, -1])
     c1 = -2*c**2*(np.dot(hpmts[0, :3]-G,H)-hpmts[0, -1])
-    c2 = c**2*(np.dot(H,H)-1)
-	
+    c2 = c**2*(c**2*np.dot(H,H)-1)
+
     # calculate roots of quadratic and discard the non-real / unphysical root
     times = np.roots([c2,c1,c0])
-    positions = [G+c*c*time*H for time in times]
+    positions = [G+c**2*time*H for time in times]
 
-    if abs((np.sqrt((check[0]-positions[0][0])**2 + (check[1]-positions[0][1])**2 + (check[2]-positions[0][2])**2))/c - check[3] + times[0]) < abs((np.sqrt((check[0]-positions[1][0])**2 + (check[1]-positions[1][1])**2 + (check[2]-positions[1][2])**2))/c - check[3] + times[1]):
+    if len(positions) == 2.0:
+      if abs((np.sqrt((check[0]-positions[0][0])**2 + (check[1]-positions[0][1])**2 + (check[2]-positions[0][2])**2))/c - check[3] + times[0]) < abs((np.sqrt((check[0]-positions[1][0])**2 + (check[1]-positions[1][1])**2 + (check[2]-positions[1][2])**2))/c - check[3] + times[1]) and np.any(abs(positions[0])) > 900.0:
         position = np.append(positions[0], times[0])
-    else: position = np.append(positions[1], times[1])
+      else: position = np.append(positions[1], times[1])
+    else: position = np.append(positions[0], times[0])
 
     # discard sets of 4 hits that yeild wildly off positions
     if np.any(abs(position) > 900.0): return [10000,0,0,0]
