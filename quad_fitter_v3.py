@@ -16,9 +16,9 @@ f = ROOT.TFile.Open(filename)
 t = f.Get("output")
 m = f.Get("meta")
 # speed of light in water in mm/ns
-c = 300.0
+c = 225.0
 # number of sets of 4 PMTs to iterate over per event
-n = 6000
+n = 3000
 
 # takes set of 4 hit PMTs and reconstructs the position based on the hit times and locations of the PMTs
 # follows math and variable naming scheme of Ian Coulter's quadfitter report
@@ -66,20 +66,23 @@ def get_hpmt_indicies(nhits):
     return random.sample(range(nhits), 5)
 
 def get_best_fit():
-    x_positions = []
-    y_positions = []
-    z_positions = []
-    times = []
+    reconstructed_x = []
+    reconstructed_y = []
+    reconstructed_z = []
 	    
     # loop through all simulated events
-    for ev in range(t.GetEntries()): #range(1):
+    for ev in range(t.GetEntries()):
+        x_positions = []
+        y_positions = []
+        z_positions = []
+        times = []
+
         t.GetEntry(ev)
         m.GetEntry(ev)
             
         pmtids = list(t.hitPMTID)
         pmttimes = list(t.hitPMTTime)
 		   
-        print("NUMBER HITS: " + str(len(pmttimes))) 
         # create array of all pmt ids and hittimes over 7ms
         times = list(pmttime for pmttime in pmttimes if pmttime < 7.0)
 		    
@@ -110,25 +113,42 @@ def get_best_fit():
                     times.append(event_position[3])
                     i+=1
         
-    # average the reconstructed positions across events and pmt choices
-    median_x = np.median(x_positions)
-    median_y = np.median(y_positions)
-    median_z = np.median(z_positions)
-    average_x = np.mean(x_positions)
-    average_y = np.mean(y_positions)
-    average_z = np.mean(z_positions)
+        # average the reconstructed positions across pmt choices to find the reconstructed position for one event
+        median_x = np.median(x_positions)
+        median_y = np.median(y_positions)
+        median_z = np.median(z_positions)
+        average_x = np.mean(x_positions)
+        average_y = np.mean(y_positions)
+        average_z = np.mean(z_positions)
+
+        reconstructed_x.append(median_x)
+        reconstructed_y.append(median_y)
+        reconstructed_z.append(median_z)
         
-    print("")
-    print("MEDIAN LOCATION: (" + str(median_x) + ", " + str(median_y) + ", " + str(median_z) +")")
-    print("AVERAGE LOCATION: (" + str(average_x) + ", " + str(average_y) + ", " + str(average_z) +")")
-		
-    plt.scatter(x_positions, y_positions, c="blue", label="Predicted Position Cloud", s=1)
+        #print("")
+        #print("MEDIAN LOCATION: (" + str(median_x) + ", " + str(median_y) + ", " + str(median_z) +")")
+        #print("AVERAGE LOCATION: (" + str(average_x) + ", " + str(average_y) + ", " + str(average_z) +")")
+
+    avg_rec_x = np.median(reconstructed_x)
+    avg_rec_y = np.median(reconstructed_y)
+    avg_rec_z = np.median(reconstructed_z)
+
+    print("MEDIAN LOCATION: (" + str(avg_rec_x) + ", " + str(avg_rec_y) + ", " + str(avg_rec_z) + ")")
+    
+    plt.scatter(reconstructed_x, reconstructed_y, c="blue", label="Reconstruction Cloud", s=1)
     plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
-    plt.scatter(0,350,c="orange", label="Simulated Position", s=5)
+    plt.scatter(150,0,c="orange", label="Simulated Position", s=5)
     plt.legend()
-    plt.title("Position in XY-Plane for Event Located at (0,350,0)")
+    plt.title("Position in XY-Plane for Event Located at (150,0,0)")
     plt.xlim(-1000,1000)
     plt.ylim(-1000,1000)
-    plt.savefig("graphs/graph_0_350_0.pdf")
+    plt.savefig("graphs/scatterplot_150_0_0.pdf")
+    plt.clf()
+
+    plt.hist(reconstructed_x, bins=30)
+    plt.xlabel("X Coordinate of Reconstructed Event")
+    plt.ylabel("Number of Events")
+    plt.title("Distribution of X Coordinates for Event Located at (150,0,0)")
+    plt.savefig("graphs/histogram_150_0_0.pdf")
 
 get_best_fit()
