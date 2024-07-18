@@ -16,7 +16,7 @@ f = ROOT.TFile.Open(filename)
 t = f.Get("output")
 m = f.Get("meta")
 # speed of light in water in mm/ns
-c = 225.0
+c = 270.0
 # number of sets of 4 PMTs to iterate over per event
 n = 3000
 
@@ -133,22 +133,43 @@ def get_best_fit():
     avg_rec_y = np.median(reconstructed_y)
     avg_rec_z = np.median(reconstructed_z)
 
+    # correct for offset in z direction
+    avg_rec_z -= 170 
+
     print("MEDIAN LOCATION: (" + str(avg_rec_x) + ", " + str(avg_rec_y) + ", " + str(avg_rec_z) + ")")
     
+    x=0
+    y=350
+    z=0
+
     plt.scatter(reconstructed_x, reconstructed_y, c="blue", label="Reconstruction Cloud", s=1)
     plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
-    plt.scatter(150,0,c="orange", label="Simulated Position", s=5)
+    plt.scatter(x,y,c="orange", label="Simulated Position", s=5)
     plt.legend()
-    plt.title("Position in XY-Plane for Event Located at (150,0,0)")
+    plt.title("Position in XY-Plane for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
     plt.xlim(-1000,1000)
     plt.ylim(-1000,1000)
-    plt.savefig("graphs/scatterplot_150_0_0.pdf")
+    #plt.savefig("graphs/wbls_scatterplot_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
     plt.clf()
 
     plt.hist(reconstructed_x, bins=30)
     plt.xlabel("X Coordinate of Reconstructed Event")
     plt.ylabel("Number of Events")
-    plt.title("Distribution of X Coordinates for Event Located at (150,0,0)")
-    plt.savefig("graphs/histogram_150_0_0.pdf")
+    plt.title("Distribution of X Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
+    #plt.savefig("graphs/wbls_histogramx_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+
+    plt.clf()
+    plt.hist(reconstructed_y, bins=30)
+    plt.xlabel("Y Coordinate of Reconstructed Event")
+    plt.ylabel("Number of Events")
+    plt.title("Distribution of Y Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
+    #plt.savefig("graphs/wbls_histogramy_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+    
+    plt.clf()
+    plt.hist(reconstructed_z, bins=30)
+    plt.xlabel("Z Coordinate of Reconstructed Event")
+    plt.ylabel("Number of Events")
+    plt.title("Disribution of Z Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
+    #plt.savefig("graphs/wbls_histogramz_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
 
 get_best_fit()
