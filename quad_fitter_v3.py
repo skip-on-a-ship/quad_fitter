@@ -16,7 +16,7 @@ f = ROOT.TFile.Open(filename)
 t = f.Get("output")
 m = f.Get("meta")
 # speed of light in water in mm/ns
-c = 270.0
+c = 225.0
 # number of sets of 4 PMTs to iterate over per event
 n = 3000
 
