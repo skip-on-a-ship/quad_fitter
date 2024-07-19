@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import random
 import matplotlib
+import argparse
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -65,7 +66,7 @@ def quadrangulate(hpmts, check):
 def get_hpmt_indicies(nhits):
     return random.sample(range(nhits), 5)
 
-def get_best_fit():
+def get_best_fit(expected_x, expected_y, expected_z):
     reconstructed_x = []
     reconstructed_y = []
     reconstructed_z = []
@@ -137,39 +138,35 @@ def get_best_fit():
     avg_rec_z -= 170 
 
     print("MEDIAN LOCATION: (" + str(avg_rec_x) + ", " + str(avg_rec_y) + ", " + str(avg_rec_z) + ")")
-    
-    x=0
-    y=350
-    z=0
 
     plt.scatter(reconstructed_x, reconstructed_y, c="blue", label="Reconstruction Cloud", s=1)
     plt.scatter(median_x, median_y, c="red", label="Median Predicted Position", s=5)
-    plt.scatter(x,y,c="orange", label="Simulated Position", s=5)
+    plt.scatter(expected_x,expected_y,c="orange", label="Simulated Position", s=5)
     plt.legend()
-    plt.title("Position in XY-Plane for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
+    plt.title("Position in XY-Plane for Event Located at ({x},{y},{z})".format(x=expected_x,y=expected_y,z=expected_z))
     plt.xlim(-1000,1000)
     plt.ylim(-1000,1000)
-    #plt.savefig("graphs/wbls_scatterplot_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+    plt.savefig("graphs/wbls_scatterplot_{x}_{y}_{z}.pdf".format(x=expected_x,y=expected_y,z=expected_z))
     plt.clf()
 
     plt.hist(reconstructed_x, bins=30)
     plt.xlabel("X Coordinate of Reconstructed Event")
     plt.ylabel("Number of Events")
-    plt.title("Distribution of X Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
-    #plt.savefig("graphs/wbls_histogramx_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+    plt.title("Distribution of X Coordinates for Event Located at ({x},{y},{z})".format(x=expected_x,y=expected_y,z=expected_z))
+    plt.savefig("graphs/wbls_histogramx_{x}_{y}_{z}.pdf".format(x=expected_x,y=expected_y,z=expected_z))
 
     plt.clf()
     plt.hist(reconstructed_y, bins=30)
     plt.xlabel("Y Coordinate of Reconstructed Event")
     plt.ylabel("Number of Events")
-    plt.title("Distribution of Y Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
-    #plt.savefig("graphs/wbls_histogramy_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+    plt.title("Distribution of Y Coordinates for Event Located at ({x},{y},{z})".format(x=expected_x,y=expected_y,z=expected_z))
+    plt.savefig("graphs/wbls_histogramy_{x}_{y}_{z}.pdf".format(x=expected_x,y=expected_y,z=expected_z))
     
     plt.clf()
     plt.hist(reconstructed_z, bins=30)
     plt.xlabel("Z Coordinate of Reconstructed Event")
     plt.ylabel("Number of Events")
-    plt.title("Disribution of Z Coordinates for Event Located at ({x},{y},{z})".format(x=x,y=y,z=z))
-    #plt.savefig("graphs/wbls_histogramz_{x}_{y}_{z}.pdf".format(x=x,y=y,z=z))
+    plt.title("Disribution of Z Coordinates for Event Located at ({x},{y},{z})".format(x=expected_x,y=expected_y,z=expected_z))
+    plt.savefig("graphs/wbls_histogramz_{x}_{y}_{z}.pdf".format(x=expected_x,y=expected_y,z=expected_z))
 
-get_best_fit()
+get_best_fit(sys.argv[2], sys.argv[3], sys.argv[4])
